@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'home_page.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -55,7 +56,10 @@ class LoginScreen extends StatelessWidget {
             const SizedBox(height: 25),
             ElevatedButton(
               onPressed: () {
-                // TODO: Navigate to Home
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.black,
