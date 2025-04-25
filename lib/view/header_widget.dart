@@ -62,7 +62,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(),
-                  child: const Text("Batal"),
+                  child: const Text("Tidak"),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -75,7 +75,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
                     );
                   },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                  child: const Text("Logout"),
+                  child: const Text("Ya"),
                 ),
               ],
             ),
