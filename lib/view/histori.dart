@@ -1,170 +1,127 @@
 import 'package:flutter/material.dart';
-import 'header_widget.dart';
-import 'bottom_navbar_widget.dart';
 
 class HistoriScreen extends StatelessWidget {
   const HistoriScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, String>> dataHistori = [
+    // Contoh data tabel
+    final List<Map<String, String>> dataTabel = [
       {'ph': '1', 'volume': '180 L', 'tanggal': '01-04-2025'},
       {'ph': '7', 'volume': '190 L', 'tanggal': '08-04-2025'},
       {'ph': '14', 'volume': '130 L', 'tanggal': '15-04-2025'},
       {'ph': '6', 'volume': '120 L', 'tanggal': '22-04-2025'},
     ];
 
-    Color getPHColor(String ph) {
-      int phValue = int.tryParse(ph) ?? 7;
-      if (phValue <= 2) return Colors.yellow;
-      if (phValue >= 13) return Colors.pink;
-      return Colors.green;
-    }
-
-    Color getVolumeColor(String volume) {
-      int vol = int.tryParse(volume.replaceAll(' L', '')) ?? 0;
-      return vol < 150 ? Colors.red : Colors.green;
-    }
-
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: const BottomNavBarWidget(),
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const HeaderWidget(),
-
-            // Tombol Back
-            Padding(
-              padding: const EdgeInsets.only(left: 16, top: 8),
-              child: GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: const Icon(Icons.arrow_back, size: 28),
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
+              const Text(
                 'Histori',
                 style: TextStyle(
-                  fontSize: 26,
+                  fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),
               ),
-            ),
+              const SizedBox(height: 24),
 
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              child: Text(
-                'Data Volume Air & pH Air Per Minggu:',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-            ),
-
-            // Tabel + Export PDF
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
+              // Ini judul Data Volume + Export PDF di 1 baris
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Export PDF button kanan atas
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Colors.black),
-                        ),
-                        onPressed: () {
-                          // TODO: Tambah fungsi export PDF
-                        },
-                        child: const Text(
-                          'Export PDF',
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // Table Header
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(color: Colors.grey.shade400),
-                      ),
-                    ),
-                    child: Row(
-                      children: const [
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            'Kadar pH',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Text(
-                            'Volume Air',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 4,
-                          child: Text(
-                            'Tanggal',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
+                  const Text(
+                    'Data Volume Air & pH Air Per Minggu:',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
                     ),
                   ),
-
-                  // Table Rows
-                  ...dataHistori.map((item) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(color: Colors.grey.shade200),
-                        ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Action export PDF
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      side: const BorderSide(color: Colors.black),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              item['ph']!,
-                              style: TextStyle(color: getPHColor(item['ph']!)),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 3,
-                            child: Text(
-                              item['volume']!,
-                              style: TextStyle(
-                                color: getVolumeColor(item['volume']!),
-                              ),
-                            ),
-                          ),
-                          Expanded(flex: 4, child: Text(item['tanggal']!)),
-                        ],
-                      ),
-                    );
-                  }).toList(),
+                    ),
+                    child: const Text(
+                      'Export PDF',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
                 ],
               ),
-            ),
-          ],
+
+              const SizedBox(height: 16),
+
+              // Ini tabelnya di Center
+              Center(
+                child: DataTable(
+                  columns: const [
+                    DataColumn(label: Text('Kadar pH')),
+                    DataColumn(label: Text('Volume Air')),
+                    DataColumn(label: Text('Tanggal')),
+                  ],
+                  rows:
+                      dataTabel.map((data) {
+                        return DataRow(
+                          cells: [
+                            DataCell(
+                              Text(
+                                data['ph'] ?? '',
+                                style: TextStyle(
+                                  color: _getPhColor(
+                                    int.tryParse(data['ph'] ?? '0') ?? 0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                data['volume'] ?? '',
+                                style: const TextStyle(color: Colors.green),
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                data['tanggal'] ?? '',
+                                style: const TextStyle(color: Colors.black),
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  // Fungsi untuk menentukan warna berdasarkan pH
+  static Color _getPhColor(int ph) {
+    if (ph <= 6) {
+      return Colors.orange;
+    } else if (ph == 7) {
+      return Colors.green;
+    } else if (ph >= 8 && ph <= 13) {
+      return Colors.purple;
+    } else {
+      return Colors.red;
+    }
   }
 }

@@ -12,8 +12,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'AquaZen',
-      theme: ThemeData(fontFamily: 'Poppins', primarySwatch: Colors.cyan),
       home: const SplashScreen(),
     );
   }
