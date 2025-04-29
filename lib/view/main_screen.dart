@@ -17,7 +17,7 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = const [
-    HomePage(), // HomePage nanti buat dashboard ringkas
+    HomePage(),
     PhAirScreen(),
     VolumeAirScreen(),
     HistoriScreen(),

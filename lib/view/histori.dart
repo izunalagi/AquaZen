@@ -5,7 +5,6 @@ class HistoriScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Contoh data tabel
     final List<Map<String, String>> dataTabel = [
       {'ph': '1', 'volume': '180 L', 'tanggal': '01-04-2025'},
       {'ph': '7', 'volume': '190 L', 'tanggal': '08-04-2025'},
@@ -32,9 +31,8 @@ class HistoriScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
 
-              // Ini judul Data Volume + Export PDF di 1 baris
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     'Data Volume Air & pH Air Per Minggu:',
@@ -44,21 +42,23 @@ class HistoriScreen extends StatelessWidget {
                       color: Colors.black87,
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Action export PDF
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      side: const BorderSide(color: Colors.black),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        side: const BorderSide(color: Colors.black),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                    ),
-                    child: const Text(
-                      'Export PDF',
-                      style: TextStyle(color: Colors.black),
+                      child: const Text(
+                        'Export PDF',
+                        style: TextStyle(color: Colors.black),
+                      ),
                     ),
                   ),
                 ],
@@ -66,7 +66,6 @@ class HistoriScreen extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-              // Ini tabelnya di Center
               Center(
                 child: DataTable(
                   columns: const [
@@ -112,7 +111,6 @@ class HistoriScreen extends StatelessWidget {
     );
   }
 
-  // Fungsi untuk menentukan warna berdasarkan pH
   static Color _getPhColor(int ph) {
     if (ph <= 6) {
       return Colors.orange;
