@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:aquazenfix/service/mqtt_service.dart';
 
 class PhAirScreen extends StatefulWidget {
   const PhAirScreen({super.key});
@@ -8,104 +9,97 @@ class PhAirScreen extends StatefulWidget {
 }
 
 class _PhAirScreenState extends State<PhAirScreen> {
-  double phair = 7;
-  bool isControllingActive = false;
+  double phair = 7.0;
+  final mqttService = MqttService();
+
+  @override
+  void initState() {
+    super.initState();
+    mqttService.onPhReceived = (ph) {
+      setState(() {
+        phair = ph;
+      });
+    };
+    mqttService.connect();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 10),
+    bool isNormal = phair >= 6.5 && phair <= 8.5;
 
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Text(
-              'pH Air',
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 10),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'pH Air',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
             ),
-          ),
-
-          const SizedBox(height: 16),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RichText(
-                  text: TextSpan(
-                    text: 'Status Controlling : ',
-                    style: const TextStyle(color: Colors.black, fontSize: 16),
-                    children: [
-                      TextSpan(
-                        text: isControllingActive ? 'Aktif' : 'Nonaktif',
-                        style: TextStyle(
-                          color:
-                              isControllingActive ? Colors.green : Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: RichText(
+                text: TextSpan(
+                  text: 'Status Controlling : ',
+                  style: const TextStyle(color: Colors.black, fontSize: 16),
+                  children: [
+                    TextSpan(
+                      text: isNormal ? 'Aktif' : 'Nonaktif',
+                      style: TextStyle(
+                        color: isNormal ? Colors.green : Colors.red,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Aktif 15 menit yang lalu',
-                  style: TextStyle(color: Colors.blueGrey, fontSize: 13),
-                ),
-              ],
+              ),
             ),
-          ),
-
-          const SizedBox(height: 30),
-
-          Center(
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  phair += 5;
-                });
-              },
+            const SizedBox(height: 30),
+            Center(
               child: Container(
                 width: 220,
                 height: 220,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.greenAccent, width: 8),
+                  border: Border.all(
+                    color: isNormal ? Colors.green : Colors.red,
+                    width: 8,
+                  ),
                 ),
                 child: Center(
                   child: Text(
-                    '${phair.toInt()}',
-                    style: const TextStyle(
+                    phair.toStringAsFixed(2),
+                    style: TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
-                      color: Colors.green,
+                      color: isNormal ? Colors.green : Colors.red,
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-
-          const SizedBox(height: 30),
-
-          Center(
-            child: Text(
-              'Status pH Air : ${phair < 7 ? "Kurang" : "Normal"}',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: phair < 7 ? Colors.red : Colors.green,
+            const SizedBox(height: 30),
+            Center(
+              child: Text(
+                'Status pH Air: ${isNormal ? "Normal" : "Tidak Normal"}',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: isNormal ? Colors.green : Colors.red,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

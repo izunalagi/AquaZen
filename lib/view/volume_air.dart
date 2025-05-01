@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:aquazenfix/service/mqtt_service.dart'; // pastikan ini sesuai path kamu
 
 class VolumeAirScreen extends StatefulWidget {
   const VolumeAirScreen({super.key});
@@ -8,17 +9,33 @@ class VolumeAirScreen extends StatefulWidget {
 }
 
 class _VolumeAirScreenState extends State<VolumeAirScreen> {
-  double volumeAir = 190; // Nanti diganti data dari IoT
+  double volumeAir = 0; // Default 0, nanti diupdate dari MQTT
   bool isControllingActive = false;
+
+  final MqttService mqttService = MqttService(); // atau pakai singleton kalau perlu
+
+  @override
+  void initState() {
+    super.initState();
+
+    mqttService.onVolumeReceived = (double newVolume) {
+      setState(() {
+        volumeAir = newVolume;
+      });
+    };
+
+    mqttService.connect(); // pastikan connect hanya sekali kalau pakai singleton
+  }
 
   @override
   Widget build(BuildContext context) {
+    final isNormal = volumeAir >= 150;
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 10),
-
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Text(
@@ -30,9 +47,7 @@ class _VolumeAirScreenState extends State<VolumeAirScreen> {
               ),
             ),
           ),
-
           const SizedBox(height: 16),
-
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
@@ -46,8 +61,7 @@ class _VolumeAirScreenState extends State<VolumeAirScreen> {
                       TextSpan(
                         text: isControllingActive ? 'Aktif' : 'Nonaktif',
                         style: TextStyle(
-                          color:
-                              isControllingActive ? Colors.green : Colors.red,
+                          color: isControllingActive ? Colors.green : Colors.red,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -62,46 +76,38 @@ class _VolumeAirScreenState extends State<VolumeAirScreen> {
               ],
             ),
           ),
-
           const SizedBox(height: 30),
-
           Center(
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  volumeAir += 5;
-                });
-              },
-              child: Container(
-                width: 220,
-                height: 220,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.greenAccent, width: 8),
+            child: Container(
+              width: 220,
+              height: 220,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isNormal ? Colors.greenAccent : Colors.redAccent,
+                  width: 8,
                 ),
-                child: Center(
-                  child: Text(
-                    '${volumeAir.toInt()} L',
-                    style: const TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
-                    ),
+              ),
+              child: Center(
+                child: Text(
+                  '${volumeAir.toInt()} L',
+                  style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: isNormal ? Colors.green : Colors.red,
                   ),
                 ),
               ),
             ),
           ),
-
           const SizedBox(height: 30),
-
           Center(
             child: Text(
-              'Status Volume Air : ${volumeAir < 150 ? "Kurang" : "Normal"}',
+              'Status Volume Air : ${isNormal ? "Normal" : "Kurang"}',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: volumeAir < 150 ? Colors.red : Colors.green,
+                color: isNormal ? Colors.green : Colors.red,
               ),
             ),
           ),
