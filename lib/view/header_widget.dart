@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
+import 'package:provider/provider.dart';
+import '../service/auth_service.dart';
 
 class HeaderWidget extends StatefulWidget {
   const HeaderWidget({super.key});
@@ -70,7 +72,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
                     Navigator.pushReplacement(
                       dialogContext,
                       MaterialPageRoute(
-                        builder: (context) => const LoginScreen(),
+                        builder: (context) =>  LoginScreen(),
                       ),
                     );
                   },
@@ -79,6 +81,40 @@ class _HeaderWidgetState extends State<HeaderWidget> {
                 ),
               ],
             ),
+      );
+    }
+
+    
+    if (selected == 'logout') {
+      if (!mounted) return;
+
+      showDialog(
+        context: localContext,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text("Logout"),
+          content: const Text("Apakah Anda yakin ingin logout?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text("Tidak"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(dialogContext).pop(); // tutup dialog
+                await Provider.of<AuthService>(dialogContext, listen: false)
+                    .logout();
+                Navigator.pushReplacement(
+                  dialogContext,
+                  MaterialPageRoute(
+                    builder: (context) => const LoginScreen(),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text("Ya"),
+            ),
+          ],
+        ),
       );
     }
   }

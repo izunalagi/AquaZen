@@ -19,16 +19,20 @@ class _SplashScreenState extends State<SplashScreen> {
 
     // Tampilkan teks setelah 1 detik
     Timer(const Duration(seconds: 1), () {
-      setState(() {
-        showText = true;
-      });
+      if (mounted) {
+        setState(() {
+          showText = true;
+        });
+      }
     });
 
     // Tampilkan tombol setelah 2 detik
     Timer(const Duration(seconds: 2), () {
-      setState(() {
-        showButton = true;
-      });
+      if (mounted) {
+        setState(() {
+          showButton = true;
+        });
+      }
     });
   }
 
